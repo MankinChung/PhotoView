@@ -56,7 +56,7 @@ class CustomGestureDetector {
 
                 if (Float.isNaN(scaleFactor) || Float.isInfinite(scaleFactor))
                     return false;
-             
+
                 if (scaleFactor >= 0) {
                     mListener.onScale(scaleFactor,
                             detector.getFocusX(),
@@ -120,9 +120,10 @@ class CustomGestureDetector {
     }
 
     private boolean processTouchEvent(MotionEvent ev) {
-        final int action = ev.getAction();
-        switch (action & MotionEvent.ACTION_MASK) {
+        final int action = ev.getActionMasked();
+        switch (action) {
             case MotionEvent.ACTION_DOWN:
+                mActivePointerIndex = 0;
                 mActivePointerId = ev.getPointerId(0);
 
                 mVelocityTracker = VelocityTracker.obtain();
@@ -134,12 +135,17 @@ class CustomGestureDetector {
                 mLastTouchY = getActiveY(ev);
                 mIsDragging = false;
                 break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                if (ev.getPointerCount() > 1) {
+                    mIsDragging = false;
+                }
+                break;
             case MotionEvent.ACTION_MOVE:
                 final float x = getActiveX(ev);
                 final float y = getActiveY(ev);
                 final float dx = x - mLastTouchX, dy = y - mLastTouchY;
 
-                if (!mIsDragging) {
+                if (!mIsDragging && ev.getPointerCount() == 1 && x != 0f && y != 0f) {
                     // Use Pythagoras to see if drag length is larger than
                     // touch slop
                     mIsDragging = Math.sqrt((dx * dx) + (dy * dy)) >= mTouchSlop;
@@ -193,16 +199,20 @@ class CustomGestureDetector {
                 }
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-                final int pointerIndex = Util.getPointerIndex(ev.getAction());
-                final int pointerId = ev.getPointerId(pointerIndex);
+                final int pointerIndex = ev.getActionIndex();
+                final int pointerId = ev.getPointerId(ev.getActionIndex());
                 if (pointerId == mActivePointerId) {
                     // This was our active pointer going up. Choose a new
                     // active pointer and adjust accordingly.
                     final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
                     mActivePointerId = ev.getPointerId(newPointerIndex);
-                    mLastTouchX = ev.getX(newPointerIndex);
-                    mLastTouchY = ev.getY(newPointerIndex);
+                    mActivePointerIndex = newPointerIndex;
                 }
+                if (null != mVelocityTracker) {
+                    mVelocityTracker.clear();
+                }
+                mLastTouchX = getActiveX(ev);
+                mLastTouchY = getActiveY(ev);
                 break;
         }
 

@@ -1,6 +1,5 @@
 package com.github.chrisbanes.photoview;
 
-import android.view.MotionEvent;
 import android.widget.ImageView;
 
 class Util {
@@ -29,9 +28,5 @@ class Util {
                 throw new IllegalStateException("Matrix scale type is not supported");
         }
         return true;
-    }
-
-    static int getPointerIndex(int action) {
-        return (action & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
     }
 }
