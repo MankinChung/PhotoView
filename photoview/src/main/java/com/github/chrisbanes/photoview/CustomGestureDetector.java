@@ -135,23 +135,18 @@ class CustomGestureDetector {
                 mLastTouchY = getActiveY(ev);
                 mIsDragging = false;
                 break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                if (ev.getPointerCount() > 1) {
-                    mIsDragging = false;
-                }
-                break;
             case MotionEvent.ACTION_MOVE:
                 final float x = getActiveX(ev);
                 final float y = getActiveY(ev);
                 final float dx = x - mLastTouchX, dy = y - mLastTouchY;
 
-                if (!mIsDragging && ev.getPointerCount() == 1 && x != 0f && y != 0f) {
+                if (!mIsDragging && x != 0f && y != 0f) {
                     // Use Pythagoras to see if drag length is larger than
                     // touch slop
                     mIsDragging = Math.sqrt((dx * dx) + (dy * dy)) >= mTouchSlop;
                 }
 
-                if (mIsDragging) {
+                if (mIsDragging && x != 0f && y != 0f) {
                     mListener.onDrag(dx, dy);
                     mLastTouchX = x;
                     mLastTouchY = y;
@@ -207,9 +202,9 @@ class CustomGestureDetector {
                     final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
                     mActivePointerId = ev.getPointerId(newPointerIndex);
                     mActivePointerIndex = newPointerIndex;
-                }
-                if (null != mVelocityTracker) {
-                    mVelocityTracker.clear();
+                    if (null != mVelocityTracker) {
+                        mVelocityTracker.clear();
+                    }
                 }
                 mLastTouchX = getActiveX(ev);
                 mLastTouchY = getActiveY(ev);
