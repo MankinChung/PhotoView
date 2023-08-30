@@ -8,11 +8,11 @@
 name: Gradle Package
 
 on:
-#  release:
-#    types: [created]
-  push:
-    tags:
-      - '*'
+  release:
+    types: [created]
+#  push:
+#    tags:
+#      - '*'
 
 jobs:
   build:
@@ -46,4 +46,4 @@ jobs:
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_VERSION: ${{ github.ref_name }}
+        # TAG_VERSION: ${{ github.ref_name }}
