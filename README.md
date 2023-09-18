@@ -10,7 +10,7 @@ Add this in your root `build.gradle` file (**not** your module `build.gradle` fi
 Then, add the library to your module `build.gradle`
 ```gradle
 dependencies {
-    implementation 'top.mank:photoview:2.3.2'
+    implementation 'top.mankin:photoview:2.3.2'
 }
 ```
 
